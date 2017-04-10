@@ -1,0 +1,7 @@
+
+*.retry
+
+.vagrant
+
+ansible/roles/docker-engine
+ansible/roles/ssh-reconnect

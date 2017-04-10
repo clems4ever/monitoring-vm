@@ -1,0 +1,23 @@
+---
+
+- set_fact:
+    body:
+      dashboard: "{{ lookup('file', '{{ item }}') }}"
+      inputs:
+        - name: DS_PROMETHEUS
+          type: datasource
+          pluginId: prometheus
+          value: Prometheus
+      overwrite: true
+
+- name: Install Prometheus dashboards
+  uri:
+    url: "http://localhost:{{ grafana_port }}/api/dashboards/import"
+    method: POST
+    user: "{{ grafana_user }}"
+    password: "{{ grafana_password }}"
+    force_basic_auth: yes
+    status_code: 200
+    body: "{{ body | to_json }}"
+    body_format: json
+

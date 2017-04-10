@@ -1,0 +1,11 @@
+vm01 ansible_host=192.168.0.101
+vm02 ansible_host=192.168.0.102
+vm03 ansible_host=192.168.0.103
+
+[monitor]
+vm01
+
+[slaves]
+vm02
+vm03
+

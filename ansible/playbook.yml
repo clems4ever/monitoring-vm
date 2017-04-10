@@ -1,0 +1,51 @@
+---
+
+- name: Docker engines
+  become: true
+  hosts: all
+  tags: ['common']
+  pre_tasks:
+    - name: Prerequisites packages are installed
+      yum: name={{ item }} state=installed
+      with_items:
+        - python-setuptools # for easy_install
+        - curl
+
+    - name: pip is up to date
+      easy_install:
+        name: pip 
+        state: present
+    
+    - name: docker-py is present
+      pip:
+        name: docker-py==1.10.6
+        state: latest
+  roles:
+    - role: docker-engine
+      docker_log_level: info
+    - role: ssh-reconnect
+
+  post_tasks:
+    - name: Add user 'monitoring' with 'docker' as a secondary group
+      user:
+        name: monitoring
+        group: docker
+
+- name: Install monitoring agent
+  become: true
+  become_user: monitoring
+  hosts: all
+  tags: ['monitoring']
+  roles:
+    - cadvisor
+    - node-exporter
+
+- name: Monitoring stack
+  become: true
+  become_user: monitoring
+  hosts: monitor
+  tags: ['monitoring', 'grafana', 'prometheus', 'alert-manager']
+  roles:
+    - role: monitoring
+      slack_url: http://test
+      monitored_group: slaves

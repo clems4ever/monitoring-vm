@@ -1,0 +1,23 @@
+
+alertmanager_port: 9093
+grafana_port: 3000
+prometheus_port: 9090
+
+alertmanager_dir: "{{ monitoring_dir }}/alertmanager"
+alertmanager_data_dir: "{{ alertmanager_dir }}/data"
+alertmanager_conf_dir: "{{ alertmanager_dir }}/conf"
+
+grafana_dir: "{{ monitoring_dir }}/grafana"
+grafana_data_dir: "{{ grafana_dir }}/data"
+grafana_conf_dir: "{{ grafana_dir }}/conf"
+grafana_dashboards_dir: "{{ grafana_data_dir }}/dashboards"
+grafana_prometheus_ds_name: Prometheus
+grafana_prometheus_ds: "http://prometheus:{{ prometheus_port }}"
+
+prometheus_dir: "{{ monitoring_dir }}/prometheus"
+prometheus_data_dir: "{{ prometheus_dir }}/data"
+prometheus_conf_dir: "{{ prometheus_dir }}/conf"
+
+grafana_user: admin
+grafana_password: password
+

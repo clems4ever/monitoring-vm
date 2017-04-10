@@ -1,0 +1,6 @@
+
+monitoring_dir: /home/monitoring
+
+cadvisor_port: 8080
+nodeexporter_port: 9100
+

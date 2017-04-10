@@ -1,0 +1,711 @@
+{
+    "__inputs": [
+        {
+            "description": "",
+            "label": "Prometheus",
+            "name": "DS_PROMETHEUS",
+            "pluginId": "prometheus",
+            "pluginName": "Prometheus",
+            "type": "datasource"
+        }
+    ],
+    "__requires": [
+        {
+            "id": "grafana",
+            "name": "Grafana",
+            "type": "grafana",
+            "version": "4.2.0"
+        },
+        {
+            "id": "graph",
+            "name": "Graph",
+            "type": "panel",
+            "version": ""
+        },
+        {
+            "id": "prometheus",
+            "name": "Prometheus",
+            "type": "datasource",
+            "version": "1.0.0"
+        },
+        {
+            "id": "table",
+            "name": "Table",
+            "type": "panel",
+            "version": ""
+        }
+    ],
+    "annotations": {
+        "list": []
+    },
+    "description": "Monitor of node metrics",
+    "editable": false,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "hideControls": false,
+    "id": null,
+    "links": [],
+    "refresh": false,
+    "rows": [
+        {
+            "collapse": false,
+            "height": "250px",
+            "panels": [
+                {
+                    "aliasColors": {},
+                    "bars": false,
+                    "datasource": "${DS_PROMETHEUS}",
+                    "fill": 1,
+                    "id": 3,
+                    "legend": {
+                        "alignAsTable": true,
+                        "avg": true,
+                        "current": true,
+                        "max": false,
+                        "min": false,
+                        "rightSide": true,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 1,
+                    "links": [],
+                    "nullPointMode": "null as zero",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "span": 6,
+                    "stack": false,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "100 - (avg by (host) (irate(node_cpu{mode=\"idle\"}[5m])) * 100)",
+                            "interval": "",
+                            "intervalFactor": 2,
+                            "legendFormat": "{{ '{{' }} host {{ '}}' }}",
+                            "refId": "A",
+                            "step": 10
+                        }
+                    ],
+                    "thresholds": [],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "CPU Usage",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 0,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        {
+                            "format": "percent",
+                            "label": "CPU usage",
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": true
+                        },
+                        {
+                            "format": "short",
+                            "label": null,
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": false
+                        }
+                    ]
+                },
+                {
+                    "alert": {
+                        "conditions": [
+                            {
+                                "evaluator": {
+                                    "params": [
+                                        20
+                                    ],
+                                    "type": "lt"
+                                },
+                                "operator": {
+                                    "type": "and"
+                                },
+                                "query": {
+                                    "params": [
+                                        "A",
+                                        "5m",
+                                        "now"
+                                    ]
+                                },
+                                "reducer": {
+                                    "params": [],
+                                    "type": "avg"
+                                },
+                                "type": "query"
+                            }
+                        ],
+                        "executionErrorState": "alerting",
+                        "frequency": "60s",
+                        "handler": 1,
+                        "name": "Available Memory alert",
+                        "noDataState": "no_data",
+                        "notifications": []
+                    },
+                    "aliasColors": {},
+                    "bars": false,
+                    "datasource": "${DS_PROMETHEUS}",
+                    "fill": 1,
+                    "id": 2,
+                    "legend": {
+                        "alignAsTable": true,
+                        "avg": false,
+                        "current": true,
+                        "hideEmpty": false,
+                        "max": false,
+                        "min": false,
+                        "rightSide": true,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 1,
+                    "links": [],
+                    "nullPointMode": "null",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "span": 6,
+                    "stack": false,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "node_memory_MemAvailable / node_memory_MemTotal * 100",
+                            "intervalFactor": 2,
+                            "legendFormat": "{{ '{{' }} host {{ '}}' }}",
+                            "metric": "",
+                            "refId": "A",
+                            "step": 10
+                        }
+                    ],
+                    "thresholds": [
+                        {
+                            "colorMode": "critical",
+                            "fill": true,
+                            "line": true,
+                            "op": "lt",
+                            "value": 20
+                        }
+                    ],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "Available Memory",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 0,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        {
+                            "format": "percent",
+                            "label": "Percentage",
+                            "logBase": 1,
+                            "max": null,
+                            "min": "0",
+                            "show": true
+                        },
+                        {
+                            "format": "short",
+                            "label": null,
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": false
+                        }
+                    ]
+                }
+            ],
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": false,
+            "title": "CPU & Memory",
+            "titleSize": "h6"
+        },
+        {
+            "collapse": false,
+            "height": 222,
+            "panels": [
+                {
+                    "alert": {
+                        "conditions": [
+                            {
+                                "evaluator": {
+                                    "params": [
+                                        20000000000
+                                    ],
+                                    "type": "lt"
+                                },
+                                "operator": {
+                                    "type": "and"
+                                },
+                                "query": {
+                                    "params": [
+                                        "A",
+                                        "5m",
+                                        "now"
+                                    ]
+                                },
+                                "reducer": {
+                                    "params": [],
+                                    "type": "avg"
+                                },
+                                "type": "query"
+                            }
+                        ],
+                        "executionErrorState": "alerting",
+                        "frequency": "60s",
+                        "handler": 1,
+                        "name": "Available Disk Space alert",
+                        "noDataState": "ok",
+                        "notifications": []
+                    },
+                    "aliasColors": {},
+                    "bars": false,
+                    "datasource": "${DS_PROMETHEUS}",
+                    "fill": 1,
+                    "id": 1,
+                    "legend": {
+                        "alignAsTable": true,
+                        "avg": false,
+                        "current": true,
+                        "max": false,
+                        "min": false,
+                        "rightSide": true,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 1,
+                    "links": [],
+                    "nullPointMode": "null as zero",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "span": 6,
+                    "stack": false,
+                    "steppedLine": true,
+                    "targets": [
+                        {
+                            "expr": "node_filesystem_free{device=\"rootfs\",mountpoint=\"/\"}",
+                            "hide": false,
+                            "intervalFactor": 1,
+                            "legendFormat": "{{ '{{' }} host {{ '}}' }}",
+                            "refId": "A",
+                            "step": 5
+                        }
+                    ],
+                    "thresholds": [
+                        {
+                            "colorMode": "critical",
+                            "fill": true,
+                            "line": true,
+                            "op": "lt",
+                            "value": 20000000000
+                        }
+                    ],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "Available Disk Space",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 0,
+                        "value_type": "individual"
+                    },
+                    "transparent": false,
+                    "type": "graph",
+                    "xaxis": {
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        {
+                            "format": "decbytes",
+                            "label": "Disk space amount",
+                            "logBase": 1,
+                            "max": null,
+                            "min": "0",
+                            "show": true
+                        },
+                        {
+                            "format": "s",
+                            "label": null,
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": false
+                        }
+                    ]
+                },
+                {
+                    "aliasColors": {},
+                    "bars": false,
+                    "datasource": "${DS_PROMETHEUS}",
+                    "fill": 1,
+                    "id": 4,
+                    "legend": {
+                        "alignAsTable": true,
+                        "avg": false,
+                        "current": true,
+                        "max": false,
+                        "min": false,
+                        "rightSide": true,
+                        "show": true,
+                        "sideWidth": null,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 1,
+                    "links": [],
+                    "nullPointMode": "connected",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [
+                        {
+                            "alias": "/IOPS.*/",
+                            "yaxis": 2
+                        }
+                    ],
+                    "span": 6,
+                    "stack": false,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "sum(irate(node_disk_bytes_read[1m])) by (host)",
+                            "intervalFactor": 1,
+                            "legendFormat": "Read {{ '{{' }} host {{ '}}' }}",
+                            "metric": "",
+                            "refId": "A",
+                            "step": 5
+                        },
+                        {
+                            "expr": "sum(irate(node_disk_bytes_written[1m])) by (host)",
+                            "intervalFactor": 1,
+                            "legendFormat": "Write {{ '{{' }} host {{ '}}' }}",
+                            "metric": "",
+                            "refId": "B",
+                            "step": 5
+                        },
+                        {
+                            "expr": "sum(irate(node_disk_io_time_ms[1m])) by (host)",
+                            "intervalFactor": 1,
+                            "legendFormat": "IOPS {{ '{{' }} host {{ '}}' }}",
+                            "refId": "C",
+                            "step": 5
+                        }
+                    ],
+                    "thresholds": [],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "IO Usage",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 0,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        {
+                            "format": "Bps",
+                            "label": "Data rate",
+                            "logBase": 1,
+                            "max": null,
+                            "min": "0",
+                            "show": true
+                        },
+                        {
+                            "format": "ms",
+                            "label": "",
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": true
+                        }
+                    ]
+                }
+            ],
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": false,
+            "title": "Disk",
+            "titleSize": "h6"
+        },
+        {
+            "collapse": false,
+            "height": 249,
+            "panels": [
+                {
+                    "aliasColors": {},
+                    "bars": false,
+                    "datasource": "${DS_PROMETHEUS}",
+                    "fill": 1,
+                    "id": 5,
+                    "legend": {
+                        "alignAsTable": true,
+                        "avg": false,
+                        "current": true,
+                        "max": false,
+                        "min": false,
+                        "rightSide": true,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 1,
+                    "links": [],
+                    "nullPointMode": "null",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "span": 10,
+                    "stack": false,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "irate(node_network_receive_bytes{device!=\"lo\"}[1m])",
+                            "intervalFactor": 1,
+                            "legendFormat": "Received {{ '{{' }} host {{ '}}' }}",
+                            "refId": "A",
+                            "step": 2
+                        },
+                        {
+                            "expr": "irate(node_network_transmit_bytes{device!=\"lo\"}[1m])",
+                            "intervalFactor": 2,
+                            "legendFormat": "Sent {{ '{{' }} host {{ '}}' }}",
+                            "refId": "B",
+                            "step": 4
+                        }
+                    ],
+                    "thresholds": [],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "Network Usage",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 0,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        {
+                            "format": "decbytes",
+                            "label": "Amount of data",
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": true
+                        },
+                        {
+                            "format": "short",
+                            "label": null,
+                            "logBase": 1,
+                            "max": null,
+                            "min": null,
+                            "show": false
+                        }
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "text": "Current",
+                            "value": "current"
+                        }
+                    ],
+                    "datasource": "${DS_PROMETHEUS}",
+                    "filterNull": false,
+                    "fontSize": "100%",
+                    "id": 6,
+                    "links": [],
+                    "minSpan": null,
+                    "pageSize": null,
+                    "scroll": true,
+                    "showHeader": true,
+                    "sort": {
+                        "col": 0,
+                        "desc": false
+                    },
+                    "span": 1,
+                    "styles": [
+                        {
+                            "colorMode": null,
+                            "colors": [
+                                "rgba(245, 54, 54, 0.9)",
+                                "rgba(237, 129, 40, 0.89)",
+                                "rgba(50, 172, 45, 0.97)"
+                            ],
+                            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                            "decimals": 0,
+                            "pattern": "/.*/",
+                            "thresholds": [],
+                            "type": "number",
+                            "unit": "short"
+                        }
+                    ],
+                    "targets": [
+                        {
+                            "expr": "process_open_fds{job=\"nodeexporter\"}",
+                            "interval": "",
+                            "intervalFactor": 1,
+                            "legendFormat": "{{ '{{' }} host {{ '}}' }}",
+                            "refId": "A",
+                            "step": 20
+                        }
+                    ],
+                    "title": "Running Processes",
+                    "transform": "timeseries_aggregations",
+                    "type": "table"
+                },
+                {
+                    "columns": [
+                        {
+                            "text": "Current",
+                            "value": "current"
+                        }
+                    ],
+                    "filterNull": false,
+                    "fontSize": "100%",
+                    "id": 7,
+                    "links": [],
+                    "pageSize": null,
+                    "scroll": true,
+                    "showHeader": true,
+                    "sort": {
+                        "col": 2,
+                        "desc": true
+                    },
+                    "span": 1,
+                    "styles": [
+                        {
+                            "colorMode": null,
+                            "colors": [
+                                "rgba(50, 172, 45, 0.97)",
+                                "rgba(237, 129, 40, 0.89)",
+                                "rgba(245, 54, 54, 0.9)"
+                            ],
+                            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                            "decimals": 0,
+                            "pattern": "Current",
+                            "thresholds": [
+                                "5",
+                                "10"
+                            ],
+                            "type": "number",
+                            "unit": "short"
+                        }
+                    ],
+                    "targets": [
+                        {
+                            "expr": "count(container_memory_usage_bytes{image!=\"\"} > 0) by (host)",
+                            "intervalFactor": 2,
+                            "legendFormat": "{{ '{{' }} host {{ '}}' }}",
+                            "metric": "container_last_seen",
+                            "refId": "A",
+                            "step": 40
+                        }
+                    ],
+                    "title": "Running Containers",
+                    "transform": "timeseries_aggregations",
+                    "type": "table"
+                }
+            ],
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": false,
+            "title": "Network & Processes",
+            "titleSize": "h6"
+        }
+    ],
+    "schemaVersion": 14,
+    "style": "dark",
+    "tags": [
+        "slaves"
+    ],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "timepicker": {
+        "refresh_intervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+        ],
+        "time_options": [
+            "5m",
+            "15m",
+            "1h",
+            "6h",
+            "12h",
+            "24h",
+            "2d",
+            "7d",
+            "30d"
+        ]
+    },
+    "timezone": "browser",
+    "title": "Slaves Monitor",
+    "version": 5
+}

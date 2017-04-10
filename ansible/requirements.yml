@@ -1,0 +1,9 @@
+---
+
+- name: docker-engine 
+  src: avinetworks.docker
+
+- name: ssh-reconnect
+  src: udondan.ssh-reconnect
+
+

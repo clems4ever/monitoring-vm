@@ -1,0 +1,7 @@
+{
+  "name": "{{ grafana_prometheus_ds_name }}",
+  "type": "prometheus",
+  "url": "{{ grafana_prometheus_ds }}",
+  "access": "proxy",
+  "isDefault": true
+}

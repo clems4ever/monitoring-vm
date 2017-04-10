@@ -1,0 +1,86 @@
+---
+- name: Grafana config directory is present
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ grafana_conf_dir }}"
+    - "{{ grafana_data_dir }}"
+    - grafana/dashboards
+
+- name: Grafana config files are present
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  register: config_state
+  with_items:
+    - { src: grafana/configuration/, dest: "{{ grafana_conf_dir }}" }
+    - { src: grafana/dashboards/, dest: grafana/dashboards }
+
+- name: Deploy Grafana service
+  docker_container: 
+    name: grafana
+    image: grafana/grafana
+    links:
+     - prometheus:prometheus
+    volumes: 
+      - "{{ grafana_data_dir }}:/var/lib/grafana"
+      - "{{ grafana_conf_dir }}:/etc/grafana"
+    labels: 
+      com.monitoring.groups: monitoring
+    env:
+      # GF_SERVER_ROOT_URL: http://grafana
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_SECURITY_ADMIN_USER: "{{ grafana_user }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ grafana_password }}"
+      GF_USERS_ALLOW_SIGN_UP: false
+      PROMETHEUS_ENDPOINT: "http://localhost:{{ prometheus_port }}"
+    published_ports:
+      - "{{ grafana_port }}:3000"
+
+- name: Is Prometheus datasource existing?
+  register: get_prometheus_ds_result
+  uri:
+    url: "http://localhost:{{ grafana_port }}/api/datasources/name/{{ grafana_prometheus_ds_name }}"
+    method: GET
+    user: "{{ grafana_user }}"
+    password: "{{ grafana_password }}"
+    force_basic_auth: yes
+    status_code: 404,200
+
+# - debug: var=get_prometheus_ds_result
+
+- set_fact:
+    is_prometheus_ds_not_installed: "{{ get_prometheus_ds_result.status == 404 }}"
+
+- template:
+    src: grafana/prometheus_datasource.json
+    dest: /tmp/prometheus_datasource.json
+    mode: 0644
+
+- shell: cat /tmp/prometheus_datasource.json
+  changed_when: false
+  register: data
+
+# - debug: var=data
+
+- name: Install Prometheus datasource
+  when: "{{ is_prometheus_ds_not_installed }}"
+  uri:
+    url: "http://localhost:{{ grafana_port }}/api/datasources"
+    method: POST
+    user: "{{ grafana_user }}"
+    password: "{{ grafana_password }}"
+    force_basic_auth: yes
+    status_code: 200
+    body: "{{ data.stdout }}"
+    body_format: json
+
+- include: grafana-dashboard.yml
+  with_fileglob: grafana/dashboards/*.json 
+
+- name: check port
+  wait_for:
+    port: "{{ grafana_port }}"

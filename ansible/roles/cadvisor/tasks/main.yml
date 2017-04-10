@@ -1,0 +1,20 @@
+---
+
+- name: Deploy cadvisor service
+  docker_container:
+    name: cadvisor
+    image: google/cadvisor:v0.24.1
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+    labels:
+      com.monitoring.groups: monitoring
+    published_ports:
+      - "{{ cadvisor_port }}:8080"
+
+- name: check port
+  wait_for:
+    port: "{{ cadvisor_port }}"
+

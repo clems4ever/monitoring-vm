@@ -1,0 +1,30 @@
+---
+
+- name: "Deploy node-exporter service"
+  docker_container:
+    name: nodeexporter
+    image: prom/node-exporter:0.12.0
+    volumes:
+      - "/proc:/host/proc"
+      - "/sys:/host/sys"
+      - "/:/rootfs"
+      - "/etc/hostname:/etc/host_hostname"
+    labels:
+      com.monitoring.groups: monitoring
+    env:
+      HOST_HOSTNAME: /etc/host_hostname
+    command: 
+      - -collector.procfs
+      - /host/proc
+      - -collector.sysfs
+      - /host/sys
+      - -collector.filesystem.ignored-mount-points
+      - ^/(sys|proc|dev|host|etc)($|/)
+      - --collectors.enabled
+      - conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,textfile,time,vmstat,ipvs
+    published_ports:
+      - "{{ nodeexporter_port }}:9100"
+
+- name: check port
+  wait_for:
+    port: "{{ nodeexporter_port }}"

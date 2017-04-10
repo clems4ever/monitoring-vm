@@ -1,0 +1,29 @@
+---
+
+- name: Alert manager config directory is present
+  file:
+    path: "{{ alertmanager_conf_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Alert config is present
+  template:
+    src: alertmanager.conf
+    dest: "{{ alertmanager_conf_dir }}/config.yml"
+    mode: 0644
+
+- name: "Deploy AlertManager service"
+  docker_container:
+    name: alertmanager
+    image: prom/alertmanager
+    volumes:
+      - "{{ alertmanager_conf_dir }}:/etc/alertmanager"
+    labels:
+      com.monitoring.groups: monitoring
+    command: '-config.file=/etc/alertmanager/config.yml'
+    published_ports:
+      - "{{ alertmanager_port }}:9093"
+
+- name: check port
+  wait_for:
+    port: "{{ alertmanager_port }}"

@@ -1,0 +1,12 @@
+{
+  "dashboard": {{ dashboard_content }},
+  "inputs": [
+    {
+      "name": "DS_PROMETHEUS", 
+      "type": "datasource", 
+      "pluginId": "prometheus", 
+      "value": "Prometheus"
+    }
+  ],
+  "overwrite": true
+}

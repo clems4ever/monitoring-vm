@@ -1,0 +1,42 @@
+---
+- name: Prometheus config directory is present
+  file:
+    path: "{{ prometheus_conf_dir }}"
+    state: directory
+    mode: 0755
+
+# - debug: var=hostvars['mx02']
+# - set_fact:
+#     rules: "{{ alerts.service_rules }}"
+
+- name: Prometheus config is present
+  register: config_generated
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ prometheus_conf_dir }}/{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - src: prometheus/prometheus.yml
+      dest: prometheus.yml
+
+# - debug: var=config_generated
+
+- name: "Deploy Prometheus service"
+  docker_container:
+    name: prometheus
+    image: prom/prometheus:v1.3.1
+    recreate: "{{ config_generated.changed }}"
+    volumes:
+      - "{{ prometheus_conf_dir }}:/etc/prometheus"
+    labels:
+      com.monitoring.groups: monitoring
+    command: >
+      -config.file=/etc/prometheus/prometheus.yml
+      -storage.local.path=/prometheus
+      -alertmanager.url=http://alertmanager:{{ alertmanager_port }}
+    published_ports:
+      - "{{ prometheus_port }}:9090"
+
+- name: check port
+  wait_for:
+    port: "{{ prometheus_port }}"
